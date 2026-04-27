@@ -10,7 +10,7 @@
 >
 > | branch | what it adds |
 > |---|---|
-> | [`fix/dsync-read-quorum-3node`](https://github.com/tommyvanderwal/rustfs/tree/fix/dsync-read-quorum-3node) | Two patches that make 3-node clusters tolerate single-node failures: (1) dsync read-quorum lowered to 1 for clients ≤ 3, (2) shared-lock fast path no longer blocks on stale `WRITERS_WAITING` flags left behind when a peer dies mid-acquire. Background and safety audit: <https://github.com/tommyvanderwal/Bedrock/blob/master/docs/scenarios/rustfs-shared-lock-leak-2026-04-27.md> |
+> | [`fix/shared-lock-stale-writers-waiting`](https://github.com/tommyvanderwal/rustfs/tree/fix/shared-lock-stale-writers-waiting) | One patch: shared-lock fast path no longer blocks on stale `WRITERS_WAITING` flags left behind when a peer dies mid-acquire (cancellation-safety leak in the slow-path waiter). Preserves all upstream lock-overlap guarantees — Wq+Rq>N still holds at every cluster size. Background, root-cause trace, and safety audit (incl. all 64 upstream `cargo test --package rustfs-lock --lib` passing): <https://github.com/tommyvanderwal/Bedrock/blob/master/docs/scenarios/rustfs-shared-lock-leak-2026-04-27.md> |
 >
 > **Intent:** keep this fork minimal, rebase the patch branch onto each
 > new RustFS release, and submit the patches upstream once they pass a
