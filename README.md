@@ -10,7 +10,7 @@
 >
 > | branch | what it adds |
 > |---|---|
-> | [`fix/dsync-read-quorum-3node`](https://github.com/tommyvanderwal/rustfs/tree/fix/dsync-read-quorum-3node) | Two patches: dsync read-quorum tolerant of 1-of-3-down (commit [`c1686a3`](https://github.com/tommyvanderwal/rustfs/commit/c1686a3)) and shared-lock fast-path bypassing stale `WRITERS_WAITING` flag from dead peers (commit [`156a58f`](https://github.com/tommyvanderwal/rustfs/commit/156a58f)). Background and safety audit: <https://github.com/tommyvanderwal/Bedrock/blob/master/docs/scenarios/rustfs-shared-lock-leak-2026-04-27.md> |
+> | [`fix/dsync-read-quorum-3node`](https://github.com/tommyvanderwal/rustfs/tree/fix/dsync-read-quorum-3node) | Two patches that make 3-node clusters tolerate single-node failures: (1) dsync read-quorum lowered to 1 for clients ≤ 3, (2) shared-lock fast path no longer blocks on stale `WRITERS_WAITING` flags left behind when a peer dies mid-acquire. Background and safety audit: <https://github.com/tommyvanderwal/Bedrock/blob/master/docs/scenarios/rustfs-shared-lock-leak-2026-04-27.md> |
 >
 > **Intent:** keep this fork minimal, rebase the patch branch onto each
 > new RustFS release, and submit the patches upstream once they pass a
