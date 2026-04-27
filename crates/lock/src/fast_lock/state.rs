@@ -66,8 +66,11 @@ impl AtomicLockState {
         let state = self.state.load(Ordering::Relaxed); // Use Relaxed for better performance
         match mode {
             LockMode::Shared => {
-                // No writer and no waiting writers
-                (state & NO_WRITER_AND_NO_WAITING_WRITERS) == 0
+                // Only block on an actual writer holding the lock. Stale
+                // "writer waiting" flags from dead peers are deliberately
+                // ignored here — see try_acquire_shared() for the full
+                // rationale. Shared locks are mutually compatible.
+                (state & WRITER_FLAG_MASK) == 0
             }
             LockMode::Exclusive => {
                 // Completely unlocked
@@ -83,8 +86,15 @@ impl AtomicLockState {
         loop {
             let current = self.state.load(Ordering::Acquire);
 
-            // Fast path check - cannot acquire if there's a writer or writers waiting
-            if (current & NO_WRITER_AND_NO_WAITING_WRITERS) != 0 {
+            // Fast path check - cannot acquire if there's an actual writer holding
+            // the lock. We deliberately do NOT block on WRITERS_WAITING here:
+            // shared locks are mutually compatible (multiple readers allowed by
+            // design), and stale "writer waiting" flags from a peer that died
+            // without releasing would otherwise pin the resource until cleanup
+            // (default 30 s). Writer starvation under sustained read load is
+            // possible but acceptable for the small-cluster, mostly-read tier
+            // this lock is on.
+            if (current & WRITER_FLAG_MASK) != 0 {
                 return false;
             }
 
