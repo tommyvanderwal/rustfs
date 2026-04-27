@@ -1,3 +1,24 @@
+> ## ⚠ This is a fork — not the official RustFS
+>
+> **Upstream project:** <https://github.com/rustfs/rustfs> ← go there for the
+> real RustFS, releases, documentation, and to file issues/PRs.
+>
+> This fork at **`tommyvanderwal/rustfs`** exists to carry small patches
+> needed to run RustFS in 3-node Bedrock deployments. The default
+> `main` branch mirrors upstream verbatim. The patches live on a
+> separate branch:
+>
+> | branch | what it adds |
+> |---|---|
+> | [`fix/dsync-read-quorum-3node`](https://github.com/tommyvanderwal/rustfs/tree/fix/dsync-read-quorum-3node) | Two patches: dsync read-quorum tolerant of 1-of-3-down (commit [`c1686a3`](https://github.com/tommyvanderwal/rustfs/commit/c1686a3)) and shared-lock fast-path bypassing stale `WRITERS_WAITING` flag from dead peers (commit [`156a58f`](https://github.com/tommyvanderwal/rustfs/commit/156a58f)). Background and safety audit: <https://github.com/tommyvanderwal/Bedrock/blob/master/docs/scenarios/rustfs-shared-lock-leak-2026-04-27.md> |
+>
+> **Intent:** keep this fork minimal, rebase the patch branch onto each
+> new RustFS release, and submit the patches upstream once they pass a
+> longer soak test. **Anything below this notice is the original
+> RustFS README** and reflects the upstream project, not this fork.
+
+---
+
 [![RustFS](https://repository-images.githubusercontent.com/722597620/0fa936a2-8164-4f53-867f-def4beb64b21)](https://rustfs.com)
 
 <p align="center">RustFS is a high-performance, distributed object storage system built in Rust.</p>
